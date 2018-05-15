@@ -29,7 +29,6 @@ function update() {
     info "Updating $image..."
 
     pushd "$image"
-
     ./update.sh | sed -e "s/^/ [$image] /g"
 
     if [ ${PIPESTATUS[0]} -ne "0" ] ; then
@@ -46,9 +45,11 @@ function maybe_build() {
   local images changed
 
   images=("$@")
+  changed=()
+
   for image in "${images[@]}"; do
-    changed+=("${image}/Dockerfile")
     if [[ -n $(git status --porcelain "$image/Dockerfile") ]]; then
+      changed+=("${image}/Dockerfile")
       if ask "Dockerfile for $image modified. Run a clean build locally?" Y; then
         TAG=clora/$image
 
@@ -63,6 +64,8 @@ function maybe_build() {
   if [ ${#changed[@]} -gt 0 ]; then
     info "Files updated, add via:"
     success " git add${changed[*]}"
+  else
+    info "No changes detected"
   fi
 }
 
