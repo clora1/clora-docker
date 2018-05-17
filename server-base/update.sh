@@ -51,6 +51,8 @@ ${DOCKERFILE_HEADER}
 
 FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION}
 
+RUN apk add --no-cache libpq tzdata
+
 ${NODE_TEMPLATE}
 
 CMD [ "bash" ]
