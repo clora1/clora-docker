@@ -22,6 +22,8 @@ NODE_VERSION=8
 
 NODE_DOCKERFILE_URL="https://raw.githubusercontent.com/nodejs/docker-node/master/$NODE_VERSION/alpine/Dockerfile"
 
+DOCKERIZE_VERSION="v0.6.1"
+
 
 info "Grabbing latest Node $NODE_VERSION.x Alpine Dockerfile"
 
@@ -51,7 +53,11 @@ ${DOCKERFILE_HEADER}
 
 FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION}
 
-RUN apk add --no-cache libpq tzdata
+RUN set -ex; \\
+    apk add --no-cache libpq openssl tzdata \\
+    && wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-alpine-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \\
+    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \\
+    && rm dockerize-alpine-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
 
 ${NODE_TEMPLATE}
 
